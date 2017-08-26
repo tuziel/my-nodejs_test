@@ -11,8 +11,15 @@ app.set("view engine", "handlebars");
 
 app.set("port", process.env.PORT || 3000);
 
+app.use(express.static(__dirname + "/public"));
+
 app.get("/", function (req, res) {
-	res.render("index");
+	var num = (function () {
+		return (Math.random() * 1000) >> 0;
+	})();
+	res.render("index", {
+		randomNum: num
+	});
 })
 
 app.get("/about", function (req, res) {
