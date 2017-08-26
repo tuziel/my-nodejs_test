@@ -1,9 +1,10 @@
-var express = require("express");
+var express = require("express"),
+	handlebars = require("express3-handlebars")
+		.create({ defaultLayout: "main" }),
+	getRandomNum = require("./lib/getRandomNum.js").getRandomNum;
+
 
 var app = express();
-
-var handlebars = require("express3-handlebars")
-	.create({ defaultLayout: "main" });
 
 app.engine("handlebars", handlebars.engine);
 
@@ -14,11 +15,8 @@ app.set("port", process.env.PORT || 3000);
 app.use(express.static(__dirname + "/public"));
 
 app.get("/", function (req, res) {
-	var num = (function () {
-		return (Math.random() * 1000) >> 0;
-	})();
 	res.render("index", {
-		randomNum: num
+		randomNum: getRandomNum(0, 1000)
 	});
 })
 
