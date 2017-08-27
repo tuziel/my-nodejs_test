@@ -5,13 +5,34 @@
 	<meta charset="UTF-8">
 	<title>主页</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	{{#if showTests}}
+		<link rel="stylesheet" href="/vendor/mocha.css">
+	{{/if}}
 </head>
 
 <body>
 	<header>
-		<img src="/img/logo.jpg" alt="logo">
+		<img height="64" src="/img/logo.jpg" alt="logo">
 	</header>
 	{{{body}}}
+
+	<script src="/vendor/jquery-3.1.0.min.js"></script>
+	{{#if showTests}}
+		<div id="mocha"></div>
+		<script src="/vendor/mocha.js"></script>
+		<script src="/vendor/chai.js"></script>
+		<script>
+			mocha.ui("tdd");
+			var assert = chai.assert;
+		</script>
+		<script src="/qa/tests-global.js"></script>
+		{{#if pageTestScript}}
+			<script src="{{pageTestScript}}"></script>
+		{{/if}}
+		<script>
+			mocha.run();
+		</script>
+	{{/if}}
 </body>
 
 </html>
