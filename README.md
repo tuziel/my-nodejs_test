@@ -3,6 +3,7 @@
 * 2017/8/28
 使用mocha和chai进行页面测试  
 进行全局测试与单页测试  
+使用mocha进行单元测试  
 
 * 2017/8/25:
 使用express3-handlebars模板页面  
