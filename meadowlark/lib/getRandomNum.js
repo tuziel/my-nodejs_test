@@ -26,6 +26,6 @@ function getRandomNum(start, end, toFixed) {
 	num = ((start * temp + num * ((end - start) * temp + 1)) >> 0) / temp;
 
 	return num;
-};
+}
 
 exports.getRandomNum = getRandomNum;
