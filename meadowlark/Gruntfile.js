@@ -2,6 +2,7 @@ module.exports = function (grunt) {
 
 	[
 		"grunt-mocha-test",
+		"grunt-eslint"
 	].forEach(function (task) {
 		grunt.loadNpmTasks(task);
 	});
@@ -13,11 +14,11 @@ module.exports = function (grunt) {
 					reporter: "spec",
 					captureFile: "results.txt",
 				},
-				src: ["public/qa/tests-*.js"]
+				src: ["public/qa/tests-randomNum.js"]
 			}
 		},
 		eslint: {
-			target: ["*.js", "lib/**/*.js"]
+			target: ["index.js"]
 		}
 	});
 

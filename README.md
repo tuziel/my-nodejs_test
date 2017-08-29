@@ -7,7 +7,7 @@
 使用ESLint进行代码检查  
 使用grunt进行自动化测试  
 
-* 2017/8/25:
+* 2017/8/26:
 使用express3-handlebars模板页面  
 发送静态页面及动态渲染页面
 使用require引入模块

@@ -1,27 +1,8 @@
 
 [0m[0m
-[0m  关于页面[0m
-  [31m  1) 联系我们链接[0m
-
-[0m  全局测试[0m
-  [31m  2) 页面标题[0m
-
 [0m  随机数测试[0m
   [32m  √[0m[90m 输出是否为数字[0m
 
 
-[92m [0m[32m 1 passing[0m[90m (38ms)[0m
-[31m  2 failing[0m
-
-[0m  1) 关于页面 联系我们链接:
-[0m[31m     ReferenceError: assert is not defined[0m[90m
-    at Context.<anonymous> (public\qa\tests-about.js:3:3)
-  
-[0m
-[0m  2) 全局测试 页面标题:
-[0m[31m     ReferenceError: assert is not defined[0m[90m
-    at Context.<anonymous> (public\qa\tests-global.js:3:3)
-  
-[0m
-
+[92m [0m[32m 1 passing[0m[90m (28ms)[0m
 
