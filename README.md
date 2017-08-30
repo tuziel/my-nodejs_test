@@ -1,5 +1,8 @@
 # nodejs学习用DEMO
 
+* 2017/8/30
+使用bodyParser对post到服务器的数据进行处理
+
 * 2017/8/28
 使用mocha和chai进行页面测试  
 进行全局测试与单页测试  
