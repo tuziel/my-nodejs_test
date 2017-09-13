@@ -1,35 +1,42 @@
+// 引入全局模块
 var express = require("express"),
 	handlebars = require("express3-handlebars")
 		.create({ defaultLayout: "main" }),
 	bodyParser = require("body-parser"),
-	getRandomNum = require("./lib/getRandomNum.js").getRandomNum;
+	random = require("./lib/random.js");
 
-
+// 创建express实例
 var app = express();
 
+// 使用handlebars模版引擎
 app.engine("handlebars", handlebars.engine);
-
 app.set("view engine", "handlebars");
 
+// 设置服务器监听3000端口
 app.set("port", process.env.PORT || 3000);
 
+// 网站路径重定向到/public文件夹
 app.use(express.static(__dirname + "/public"));
 
+// 使用bodyParser解析请求
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+// 检测test参数切换开发/生产版本
 app.use(function (req, res, next) {
 	res.locals.showTests =
 		app.get("env") !== "production" && req.query.test === "1";
 	next();
 });
 
+// 设置主页
 app.get("/", function (req, res) {
 	res.render("index", {
-		randomNum: getRandomNum(0, 1000)
+		randomNum: random.number(0, 1000)
 	});
 });
 
+// 其他页面
 app.get("/about", function (req, res) {
 	res.render("about", {
 		pageTestScript: "/qa/tests-about.js"
@@ -55,6 +62,7 @@ app.get("/error", function (req, res) {
 		.render("500");
 });
 
+// 接口
 app.post("/post", function (req, res) {
 	var data = req.body;
 	res.status(303)
@@ -64,6 +72,7 @@ app.post("/post", function (req, res) {
 		});
 });
 
+// 错误路径
 app.use(function (req, res) {
 	res.status(404)
 		.render("404");
@@ -75,6 +84,7 @@ app.use(function (err, req, res) {
 		.render("500");
 });
 
+// 开启服务器监听端口
 app.listen(app.get("port"), function () {
 	console.log("Server is running");
 });

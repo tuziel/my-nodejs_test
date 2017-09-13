@@ -1,3 +1,5 @@
+/* global suite test assert */
+
 suite("全局测试", function () {
 	test("页面标题", function () {
 		assert(document.title &&
