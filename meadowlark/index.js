@@ -6,7 +6,8 @@ var express = require("express"),
 			extname: "hbs"
 		}),
 	bodyParser = require("body-parser"),
-	random = require("./lib/random.js");
+	random = require("./lib/random.js"),
+	getWeatherData = require("./lib/getWeatherData.js");
 
 // 创建express实例
 var app = express();
@@ -29,6 +30,15 @@ app.use(bodyParser.json());
 app.use(function (req, res, next) {
 	res.locals.showTests =
 		app.get("env") !== "production" && req.query.test === "1";
+	next();
+});
+
+// 添加中间件getWeatherData
+app.use(function (req, res, next) {
+	if (!res.locals.partials) {
+		res.locals.partials = {};
+	}
+	res.locals.partials.weather = getWeatherData();
 	next();
 });
 

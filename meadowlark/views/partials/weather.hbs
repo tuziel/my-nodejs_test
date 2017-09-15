@@ -1,0 +1,12 @@
+<div>
+	{{#each partials.weather.locations}}
+	<div>
+		<h3>{{name}}</h3>
+		<a href="{{url}}">
+			<img src="{{iconUrl}}" alt="{{weather}}">
+			{{weather}}, {{temp}}
+		</a>
+	</div>
+	{{/each}}
+	<small>来源：<a href="https://www.wunderground.com/">https://www.wunderground.com/</a></small>
+</div>
