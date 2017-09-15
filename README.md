@@ -1,5 +1,9 @@
 # nodejs学习用DEMO
 
+* 2017/9/15
+使用handlebars模板渲染页面
+使用hbs简化模板后缀名
+
 * 2017/8/30
 使用bodyParser对post到服务器的数据进行处理
 

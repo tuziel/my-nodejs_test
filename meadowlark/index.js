@@ -1,7 +1,10 @@
 // 引入全局模块
 var express = require("express"),
 	handlebars = require("express3-handlebars")
-		.create({ defaultLayout: "main" }),
+		.create({
+			defaultLayout: "main",
+			extname: "hbs"
+		}),
 	bodyParser = require("body-parser"),
 	random = require("./lib/random.js");
 
@@ -9,8 +12,8 @@ var express = require("express"),
 var app = express();
 
 // 使用handlebars模版引擎
-app.engine("handlebars", handlebars.engine);
-app.set("view engine", "handlebars");
+app.engine("hbs", handlebars.engine);
+app.set("view engine", "hbs");
 
 // 设置服务器监听3000端口
 app.set("port", process.env.PORT || 3000);
@@ -45,6 +48,27 @@ app.get("/about", function (req, res) {
 
 app.get("/contact", function (req, res) {
 	res.render("contact");
+});
+
+app.get("/block", function (req, res) {
+	res.render("block", {
+		currency: {
+			name: "人民币",
+			abbrev: "RMB"
+		},
+		tours: [
+			{
+				name: "广东",
+				price: "￥159.95"
+			},
+			{
+				name: "广西",
+				price: "￥99.95"
+			}
+		],
+		contact: "/contact",
+		currencies: ["RMB", "HKD", "USD"]
+	});
 });
 
 app.get("/headers", function (req, res) {

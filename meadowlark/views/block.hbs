@@ -1,0 +1,28 @@
+<ul>
+	{{#each tours}}
+	<li>
+		{{name}} -- {{price}}
+		{{#if ../currencies}}
+			({{../../currency.abbrev}})
+		{{/if}}
+	</li>
+	{{/each}}
+</ul>
+
+{{#unless currencies}}
+	<p>All prices in {{currency.name}}</p>
+{{/unless}}
+
+{{#if contact}}
+	<p>跳转到<a href="{{contact}}">联系我们</a></p>
+{{else}}
+	<p>请先登录.</p>
+{{/if}}
+
+<p>
+	{{#each currencies}}
+		<a href="#">{{.}}</a>
+	{{else}}
+		我们只支持{{currency.name}}.
+	{{/each}}
+</p>
