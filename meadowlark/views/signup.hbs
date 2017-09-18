@@ -1,0 +1,24 @@
+<h2>用户注册</h2>
+<form action="/process?form=signup" method="POST">
+
+	<input type="hidden" name="_csrf" value="csrf">
+
+	<div>
+		<label for="name">
+			<span>用户名:</span>
+			<input type="text" name="name" id="name">
+		</label>
+	</div>
+
+	<div>
+		<label for="email">
+			<span>邮箱:</span>
+			<input type="email" name="email" id="email">
+		</label>
+	</div>
+
+	<div>
+		<input type="submit" value="注册">
+	</div>
+
+</form>

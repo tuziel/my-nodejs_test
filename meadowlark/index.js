@@ -91,6 +91,16 @@ app.get("/headers", function (req, res) {
 		.send(str);
 });
 
+app.get("/signup", function (req, res) {
+	res.render("signup", {
+		csrf: "CSRF"
+	});
+});
+
+app.get("/thank-you", function (req, res) {
+	res.render("thank-you");
+});
+
 app.get("/error", function (req, res) {
 	res.status(500)
 		.render("500");
@@ -104,6 +114,14 @@ app.post("/post", function (req, res) {
 			name: data.name,
 			email: data.email
 		});
+});
+
+app.post("/process", function (req, res) {
+	console.log("表单: ", req.query.form);
+	console.log("CSRF: ", req.body._csrf);
+	console.log("用户名: ", req.body.name);
+	console.log("邮箱: ", req.body.email);
+	res.redirect(303, "/thank-you");
 });
 
 // 错误路径
