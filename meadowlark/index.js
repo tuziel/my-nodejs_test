@@ -6,6 +6,8 @@ var express = require("express"),
 			extname: "hbs"
 		}),
 	bodyParser = require("body-parser"),
+	cookieParser = require("cookie-parser"),
+	session = require("express-session"),
 	random = require("./lib/random.js"),
 	getWeatherData = require("./lib/getWeatherData.js");
 
@@ -26,6 +28,17 @@ app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+// 使用cookieParser解析cookie
+app.use(cookieParser());
+
+// 使用session管理会话
+app.use(session({
+	secret: "keyboard cat",
+	resave: false,
+	saveUninitialized: true,
+	cookie: {}
+}));
+
 // 检测test参数切换开发/生产版本
 app.use(function (req, res, next) {
 	res.locals.showTests =
@@ -42,8 +55,16 @@ app.use(function (req, res, next) {
 	next();
 });
 
+// 即显消息？？？
+app.use(function (req, res, next) {
+	res.locals.flash = req.session.flash;
+	delete req.session.flash;
+	next();
+});
+
 // 设置主页
 app.get("/", function (req, res) {
+	req.session.userName = "tuziel";
 	res.render("index", {
 		randomNum: random.number(0, 1000)
 	});
@@ -117,10 +138,23 @@ app.post("/post", function (req, res) {
 });
 
 app.post("/process", function (req, res) {
-	console.log("表单: ", req.query.form);
-	console.log("CSRF: ", req.body._csrf);
-	console.log("用户名: ", req.body.name);
-	console.log("邮箱: ", req.body.email);
+	var form = req.query.form || "",
+		_csrf = req.body._csrf || "",
+		name = req.body.name || "",
+		email = req.body.email || "";
+
+	console.log("----------",
+		"\n表单: ", form,
+		"\nCSRF: ", _csrf,
+		"\n用户名: ", name,
+		"\n邮箱: ", email
+	);
+
+	req.session.flash = {
+		type: "success",
+		intro: "thank you",
+		message: "感谢您的注册"
+	};
 	res.redirect(303, "/thank-you");
 });
 
