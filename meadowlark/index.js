@@ -172,5 +172,8 @@ app.use(function (err, req, res) {
 
 // 开启服务器监听端口
 app.listen(app.get("port"), function () {
-	console.log("Server is running");
+	console.log("Server is running",
+		"\nExpress started in " + app.get("env"),
+		"\nMode on http://localhost:" + app.get("port"),
+		"\nPress Ctrl-C to terminate");
 });
