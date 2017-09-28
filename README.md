@@ -1,5 +1,9 @@
 # nodejs学习用DEMO
 
+* 2017/9/28
+使用`mongodb`数据库
+使用`mongoose`创建与连接数据库
+
 * 2017/9/25
 使用`cookie-parser`与`express-session`管理cookie与会话  
 

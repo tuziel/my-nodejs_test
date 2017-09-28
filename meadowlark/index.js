@@ -8,11 +8,17 @@ var express = require("express"),
 	bodyParser = require("body-parser"),
 	cookieParser = require("cookie-parser"),
 	session = require("express-session"),
-	random = require("./lib/random.js"),
-	getWeatherData = require("./lib/getWeatherData.js");
+	mongoose = require("mongoose"),
 
-// 创建express实例
-var app = express();
+	random = require("./lib/random.js"),
+	getWeatherData = require("./lib/getWeatherData.js"),
+
+	Vacation = require("./models/vacation.js"),
+
+	DB_URL = "mongodb://localhost:27017/meadowlark",
+
+	// 创建express实例
+	app = express();
 
 // 使用handlebars模版引擎
 app.engine("hbs", handlebars.engine);
@@ -118,6 +124,22 @@ app.get("/signup", function (req, res) {
 	});
 });
 
+app.get("/vacations", function (req, res) {
+	Vacation.find({ available: true }, function (err, vacations) {
+		var context = {
+			vacations: vacations.map(function (vacation) {
+				return {
+					name: vacation.name,
+					description: vacation.description,
+					price: vacation.getDsiplayPrice(),
+					available: vacation.available
+				};
+			})
+		};
+		res.render("vacations", context);
+	});
+});
+
 app.get("/thank-you", function (req, res) {
 	res.render("thank-you");
 });
@@ -172,8 +194,65 @@ app.use(function (err, req, res) {
 
 // 开启服务器监听端口
 app.listen(app.get("port"), function () {
-	console.log("Server is running",
-		"\nExpress started in " + app.get("env"),
-		"\nMode on http://localhost:" + app.get("port"),
-		"\nPress Ctrl-C to terminate");
+	console.log("服务已启动",
+		"\n工作环境为: " + app.get("env"),
+		"\n主页地址: http://localhost:" + app.get("port"),
+		"\n按下 Ctrl-C 停止服务\n");
+});
+
+// 连接数据库
+mongoose.connect(DB_URL, {
+	useMongoClient: true,
+});
+
+// 连接成功
+mongoose.connection.on("connected", function () {
+	console.log("连接到数据库 " + DB_URL);
+});
+
+// 连接异常
+mongoose.connection.on("error", function (err) {
+	console.log("连接数据库发生错误: " + err);
+});
+
+// 连接断开
+mongoose.connection.on("disconnected", function () {
+	console.log("与数据库连接断开");
+});
+
+Vacation.find(function (err, vacations) {
+	if (vacations.length) {
+		return;
+	}
+
+	new Vacation({
+		name: "广州",
+		category: "一日游",
+		description: "广州一日游，大城市",
+		price: 15888,
+		tags: ["一日游", "广州", "买买买"],
+		available: true,
+		maxGuest: 30
+	}).save();
+
+	new Vacation({
+		name: "深圳",
+		category: "一日游",
+		description: "享受快节奏生活",
+		price: 18888,
+		tags: ["一日游", "深圳"],
+		available: false,
+		maxGuest: 20
+	}).save();
+
+	new Vacation({
+		name: "东莞",
+		category: "三日游",
+		description: "极致服务",
+		price: 99999,
+		tags: ["三日游", "东莞", "大保健"],
+		available: true,
+		maxGuest: 10,
+		notes: "并没有特殊服务"
+	}).save();
 });

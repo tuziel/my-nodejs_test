@@ -1,0 +1,16 @@
+<h1>旅游</h1>
+{{#each vacations}}
+	<div>
+		<h3>{{name}}</h3>
+		<p>{{description}}</p>
+		<p>
+			{{#if available}}
+				<span>{{price}}</span>
+				<a href="#">走起</a>
+			{{else}}
+				<span>暂无详细信息</span>
+			{{/if}}
+		</p>
+
+	</div>
+{{/each}}
