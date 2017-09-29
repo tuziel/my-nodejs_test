@@ -1,5 +1,4 @@
 var mongoose = require("mongoose"),
-	DB_URL = "mongodb://localhost:27017/meadowlark",
 
 	vacations = mongoose.Schema({
 		name: String,

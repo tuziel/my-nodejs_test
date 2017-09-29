@@ -1,5 +1,7 @@
 // 引入全局模块
-var express = require("express"),
+var cp = require("child_process"),
+
+	express = require("express"),
 	handlebars = require("express3-handlebars")
 		.create({
 			defaultLayout: "main",
@@ -14,6 +16,7 @@ var express = require("express"),
 	getWeatherData = require("./lib/getWeatherData.js"),
 
 	Vacation = require("./models/vacation.js"),
+	User = require("./models/user.js"),
 
 	DB_URL = "mongodb://localhost:27017/meadowlark",
 
@@ -161,23 +164,31 @@ app.post("/post", function (req, res) {
 
 app.post("/process", function (req, res) {
 	var form = req.query.form || "",
-		_csrf = req.body._csrf || "",
 		name = req.body.name || "",
 		email = req.body.email || "";
 
-	console.log("----------",
-		"\n表单: ", form,
-		"\nCSRF: ", _csrf,
-		"\n用户名: ", name,
-		"\n邮箱: ", email
-	);
+	User.update(
+		{
+			email: email
+		}, {
+			name: name
+		}, {
+			upsert: true
+		},
+		function (err) {
+			if (err) {
+				console.error(err.stack);
+				return res.redirect(500, "/error");
+			}
 
-	req.session.flash = {
-		type: "success",
-		intro: "thank you",
-		message: "感谢您的注册"
-	};
-	res.redirect(303, "/thank-you");
+			req.session.flash = {
+				type: "success",
+				intro: "thank you",
+				message: "感谢您的注册"
+			};
+			return res.redirect(303, "/thank-you");
+		}
+	);
 });
 
 // 错误路径
@@ -194,10 +205,14 @@ app.use(function (err, req, res) {
 
 // 开启服务器监听端口
 app.listen(app.get("port"), function () {
-	console.log("服务已启动",
-		"\n工作环境为: " + app.get("env"),
-		"\n主页地址: http://localhost:" + app.get("port"),
-		"\n按下 Ctrl-C 停止服务\n");
+	var uri = "http://localhost:" + app.get("port");
+
+	console.log("服务已启动\n" +
+		"工作环境为: " + app.get("env") + "\n" +
+		"主页地址: " + uri + "\n" +
+		"按下 Ctrl-C 停止服务" + "\n");
+
+	cp.exec("start " + uri);
 });
 
 // 连接数据库
