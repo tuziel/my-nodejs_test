@@ -2,6 +2,7 @@
 var cp = require("child_process"),
 
 	express = require("express"),
+	// connect = require("connect"),
 	handlebars = require("express3-handlebars")
 		.create({
 			defaultLayout: "main",
@@ -11,6 +12,7 @@ var cp = require("child_process"),
 	cookieParser = require("cookie-parser"),
 	session = require("express-session"),
 	mongoose = require("mongoose"),
+	// SessionStore = require("session-mongoose")(connect),
 
 	random = require("./lib/random.js"),
 	getWeatherData = require("./lib/getWeatherData.js"),
@@ -19,6 +21,8 @@ var cp = require("child_process"),
 	User = require("./models/user.js"),
 
 	DB_URL = "mongodb://localhost:27017/meadowlark",
+
+	// store = new SessionStore({ url: DB_URL }),
 
 	// 创建express实例
 	app = express();
@@ -45,6 +49,7 @@ app.use(session({
 	secret: "keyboard cat",
 	resave: false,
 	saveUninitialized: true,
+	// store: store,
 	cookie: {}
 }));
 
@@ -71,11 +76,17 @@ app.use(function (req, res, next) {
 	next();
 });
 
+// 显示用户名
+app.use(function (req, res, next) {
+	var name = req.session.name;
+	name && (res.locals.name = req.session.name);
+	next();
+});
+
 // 设置主页
 app.get("/", function (req, res) {
-	req.session.userName = "tuziel";
 	res.render("index", {
-		randomNum: random.number(0, 1000)
+		randomNum: random.number(0, 100)
 	});
 });
 
@@ -122,9 +133,15 @@ app.get("/headers", function (req, res) {
 });
 
 app.get("/signup", function (req, res) {
+	var code = random.number(0, 1e6);
+	req.session.code = code;
 	res.render("signup", {
-		csrf: "CSRF"
+		code: code
 	});
+});
+
+app.get("/login", function (req, res) {
+	res.render("login");
 });
 
 app.get("/vacations", function (req, res) {
@@ -143,8 +160,8 @@ app.get("/vacations", function (req, res) {
 	});
 });
 
-app.get("/thank-you", function (req, res) {
-	res.render("thank-you");
+app.get("/message", function (req, res) {
+	res.render("message");
 });
 
 app.get("/error", function (req, res) {
@@ -163,32 +180,123 @@ app.post("/post", function (req, res) {
 });
 
 app.post("/process", function (req, res) {
-	var form = req.query.form || "",
-		name = req.body.name || "",
-		email = req.body.email || "";
+	var form = req.query.form || "";
 
-	User.update(
-		{
+	function signup() {
+		var name = req.body.name || "",
+			email = req.body.email || "",
+			code = req.body.code || "";
+
+		if (!name || !email) {
+			req.session.flash = {
+				type: "error",
+				intro: "empty value",
+				message: "请输入完整的信息"
+			};
+			return res.redirect(303, "/message");
+		}
+
+		if (+code !== req.session.code) {
+			req.session.flash = {
+				type: "error",
+				intro: "code error",
+				message: "验证码不正确"
+			};
+			return res.redirect(303, "/message");
+		}
+
+		User.find({
 			email: email
-		}, {
-			name: name
-		}, {
-			upsert: true
-		},
-		function (err) {
-			if (err) {
-				console.error(err.stack);
-				return res.redirect(500, "/error");
+		}, function (err, users) {
+			if (users.length) {
+				req.session.flash = {
+					type: "error",
+					intro: "already exists",
+					message: "该邮箱已被使用"
+				};
+				return res.redirect(303, "/message");
+
+			} else {
+				User.update(
+					{
+						email: email
+					}, {
+						name: name
+					}, {
+						upsert: true
+					},
+					function (err) {
+						if (err) {
+							console.error(err.stack);
+							return res.redirect(500, "/error");
+						}
+
+						req.session.name = name;
+						req.session.flash = {
+							type: "success",
+							intro: "thank you",
+							message: "感谢您的注册"
+						};
+						return res.redirect(303, "/message");
+					}
+				);
+			}
+		});
+	}
+
+	function login() {
+		var name = req.body.name || "",
+			email = req.body.email || "";
+
+		User.find({
+			email: email
+		}, function (err, users) {
+			if (!users.length) {
+				req.session.flash = {
+					type: "error",
+					intro: "user error",
+					message: "该邮箱不存在"
+				};
+				return res.redirect(303, "/message");
 			}
 
-			req.session.flash = {
-				type: "success",
-				intro: "thank you",
-				message: "感谢您的注册"
-			};
-			return res.redirect(303, "/thank-you");
-		}
-	);
+			if (users[0].name === name) {
+				req.session.name = name;
+				req.session.flash = {
+					type: "success",
+					intro: "login",
+					message: "登录成功"
+				};
+				return res.redirect(303, "/message");
+
+			} else {
+				req.session.flash = {
+					type: "error",
+					intro: "input error",
+					message: "用户名与邮箱不匹配"
+				};
+				return res.redirect(303, "/message");
+			}
+		});
+	}
+
+	function logout() {
+		delete req.session.name;
+		req.session.flash = {
+			type: "success",
+			intro: "logout",
+			message: "已退出登录"
+		};
+		return res.redirect(303, "/message");
+	}
+
+	if (form === "signup") {
+		signup();
+	} else if (form === "login") {
+		login();
+	} else if (form === "logout") {
+		logout();
+	}
 });
 
 // 错误路径
@@ -210,7 +318,7 @@ app.listen(app.get("port"), function () {
 	console.log("服务已启动\n" +
 		"工作环境为: " + app.get("env") + "\n" +
 		"主页地址: " + uri + "\n" +
-		"按下 Ctrl-C 停止服务" + "\n");
+		"按下 Ctrl-C 停止服务");
 
 	cp.exec("start " + uri);
 });
@@ -233,41 +341,4 @@ mongoose.connection.on("error", function (err) {
 // 连接断开
 mongoose.connection.on("disconnected", function () {
 	console.log("与数据库连接断开");
-});
-
-Vacation.find(function (err, vacations) {
-	if (vacations.length) {
-		return;
-	}
-
-	new Vacation({
-		name: "广州",
-		category: "一日游",
-		description: "广州一日游，大城市",
-		price: 15888,
-		tags: ["一日游", "广州", "买买买"],
-		available: true,
-		maxGuest: 30
-	}).save();
-
-	new Vacation({
-		name: "深圳",
-		category: "一日游",
-		description: "享受快节奏生活",
-		price: 18888,
-		tags: ["一日游", "深圳"],
-		available: false,
-		maxGuest: 20
-	}).save();
-
-	new Vacation({
-		name: "东莞",
-		category: "三日游",
-		description: "极致服务",
-		price: 99999,
-		tags: ["三日游", "东莞", "大保健"],
-		available: true,
-		maxGuest: 10,
-		notes: "并没有特殊服务"
-	}).save();
 });

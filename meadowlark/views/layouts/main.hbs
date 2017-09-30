@@ -12,7 +12,13 @@
 
 <body>
 	<header>
-		<img height="64" src="/img/logo.jpg" alt="logo">
+		<a href="/"><img height="64" src="/img/logo.jpg" alt="logo"></a>
+		{{#if name}}
+		<div>用户名: <span>{{name}}</span></div>
+		<form action="/process?form=logout" method="POST">
+			<input type="submit" value="退出登录">
+		</form>
+		{{/if}}
 	</header>
 	{{{body}}}
 
