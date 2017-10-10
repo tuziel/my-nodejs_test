@@ -14,6 +14,7 @@ var cp = require("child_process"),
 
 	getWeatherData = require("./lib/getWeatherData.js"),
 
+	init = require("./init.js"),
 	routes = require("./routes.js"),
 
 	DB_URL = "mongodb://localhost:27017/meadowlark",
@@ -112,3 +113,6 @@ mongoose.connection.on("error", function (err) {
 mongoose.connection.on("disconnected", function () {
 	console.log("与数据库连接断开");
 });
+
+// 数据初始化
+init();

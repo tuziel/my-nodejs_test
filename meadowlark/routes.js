@@ -19,6 +19,9 @@ module.exports = function (app) {
 	// 接口
 	app.post("/post", api.post);
 	app.post("/process", api.process);
+	app.get("/api/getAttractionList", api.getAttractionList);
+	app.get("/api/getAttraction", api.getAttraction);
+	app.post("/api/addAttraction", api.addAttraction);
 
 	// 错误页面
 	app.use(function (req, res) {

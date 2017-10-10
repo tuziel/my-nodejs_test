@@ -78,7 +78,7 @@ module.exports = {
 		});
 	},
 
-	// 旅游
+	// 旅游选择
 	vacations: function (req, res) {
 		Vacation.find({ available: true }, function (err, vacations) {
 			var context = {

@@ -1,5 +1,6 @@
 var
-	User = require("../models/user.js");
+	User = require("../models/user.js"),
+	Attraction = require("../models/attraction.js");
 
 function signup(req, res) {
 	var name = req.body.name || "",
@@ -133,4 +134,69 @@ module.exports = {
 			logout(req, res);
 		}
 	},
+
+	// 获取景点列表
+	getAttractionList: function (req, res) {
+		Attraction.find({
+			approved: true
+		}, function (err, attractions) {
+			if (err) {
+				return res.send(500, "数据库发生错误");
+			}
+			res.json(attractions.map(function (a) {
+				return {
+					name: a.name,
+					id: a._id,
+					description: a.description,
+					location: a.location
+				};
+			}));
+		}
+		);
+	},
+
+	// 获取景点信息
+	getAttraction: function (req, res) {
+		Attraction.findById(
+			req.params.id,
+			function (err, a) {
+				if (err) {
+					return res.send(500, "数据库发生错误");
+				}
+				res.json({
+					name: a.name,
+					id: a._id,
+					description: a.description,
+					location: a.location
+				});
+			});
+	},
+
+	// 添加景点
+	addAttraction: function (req, res) {
+		var
+			data = req.body,
+			a = new Attraction({
+				name: data.name,
+				description: data.description,
+				location: {
+					lat: data.lat,
+					lng: data.lng
+				},
+				history: {
+					event: "created",
+					email: data.email,
+					date: new Date()
+				},
+				approved: false
+			});
+		a.save(function (err, a) {
+			if (err) {
+				return res.send(500, "数据库发生错误");
+			}
+			res.json({
+				id: a._id
+			});
+		});
+	}
 };
