@@ -16,12 +16,12 @@
     "express-session": "^1.15.5",
     "express3-handlebars": "^0.5.2",
     "mongodb": "^2.2.31",
-    "mongoose": "^4.11.13",
-    "session-mongoose": "^0.5.2"
+    "mongoose": "^4.11.13"
   },
   "devDependencies": {
     "chai": "^4.1.1",
     "grunt": "^1.0.1",
+    "grunt-contrib-less": "^1.4.1",
     "grunt-eslint": "^20.0.0",
     "grunt-mocha-test": "^0.13.2",
     "mocha": "^3.5.0"

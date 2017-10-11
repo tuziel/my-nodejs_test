@@ -2,6 +2,7 @@ module.exports = function (grunt) {
 
 	// 引入中间件
 	[
+		"grunt-contrib-less",
 		"grunt-mocha-test",
 		"grunt-eslint"
 	].forEach(function (task) {
@@ -10,6 +11,15 @@ module.exports = function (grunt) {
 
 	// 设置grunt默认任务
 	grunt.initConfig({
+		// 设置less任务
+		less: {
+			development: {
+				files: {
+					"public/css/main.css": "less/main.css"
+				}
+			}
+		},
+
 		// 设置mocha任务
 		mochaTest: {
 			test: {
