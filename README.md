@@ -2,6 +2,7 @@
 
 * 2017/10/11  
 使用`contrib-less`处理less文件  
+使用`contrib-uglify`和`contrib-cssmin`压缩代码  
 
 * 2017/10/10  
 使用`express`添加api  

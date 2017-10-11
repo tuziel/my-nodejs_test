@@ -3,6 +3,8 @@ module.exports = function (grunt) {
 	// 引入中间件
 	[
 		"grunt-contrib-less",
+		"grunt-contrib-uglify",
+		"grunt-contrib-cssmin",
 		"grunt-mocha-test",
 		"grunt-eslint"
 	].forEach(function (task) {
@@ -15,7 +17,35 @@ module.exports = function (grunt) {
 		less: {
 			development: {
 				files: {
-					"public/css/main.css": "less/main.css"
+					"public/css/style.css": "less/style.less",
+					"public/css/theme.css": "less/theme.less",
+				}
+			}
+		},
+
+		// 压缩css文件
+		cssmin: {
+			combine: {
+				files: {
+					"public/css/main.cb.css": [
+						"public/css/**/*.css",
+						"!public/css/main*.css"
+					]
+				}
+			},
+			minify: {
+				src: "public/css/main.css",
+				dest: "public/css/main.min.css"
+			}
+		},
+
+		// 压缩js文件
+		uglify: {
+			all: {
+				files: {
+					"public/js/main.min.js": [
+						"public/js/**/*.js"
+					]
 				}
 			}
 		},
@@ -50,5 +80,6 @@ module.exports = function (grunt) {
 		}
 	});
 
-	grunt.registerTask("default", ["mochaTest", "eslint"]);
+	grunt.registerTask("default", ["less", "cssmin", "uglify"]);
+	grunt.registerTask("test", ["mochaTest", "eslint"]);
 };
