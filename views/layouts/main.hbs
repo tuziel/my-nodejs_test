@@ -5,7 +5,14 @@
 	<meta charset="UTF-8">
 	<title>{{title}}</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="/css/main.css">
+
+	{{#if dev}}
+		<link rel="stylesheet" href="/css/style.css">
+		<link rel="stylesheet" href="/css/theme.css">
+	{{else}}
+		<link rel="stylesheet" href="/css/main.min.css">
+	{{/if}}
+
 	{{#if showTests}}
 		<link rel="stylesheet" href="/vendor/mocha.css">
 	{{/if}}
@@ -21,9 +28,17 @@
 		</form>
 		{{/if}}
 	</header>
+
 	{{{body}}}
 
 	<script src="/vendor/jquery-3.1.0.min.js"></script>
+
+	{{#if dev}}
+		<script src="/js/tzel.js"></script>
+	{{else}}
+		<script src="/js/main.min.js"></script>
+	{{/if}}
+
 	{{#if showTests}}
 		<div id="mocha"></div>
 		<script src="/vendor/mocha.js"></script>

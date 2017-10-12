@@ -27,7 +27,7 @@ module.exports = function (grunt) {
 		cssmin: {
 			combine: {
 				files: {
-					"public/css/main.cb.css": [
+					"public/css/main.css": [
 						"public/css/**/*.css",
 						"!public/css/main*.css"
 					]

@@ -49,10 +49,14 @@ app.use(session({
 	}
 }));
 
-// 检测test参数切换开发/生产版本
+// 切换开发/生产版本
 app.use(function (req, res, next) {
-	res.locals.showTests =
-		app.get("env") !== "production" && req.query.test === "1";
+	var env = app.get("env"),
+		dev = env !== "production";
+
+	res.locals.dev = dev;
+	// 检测test参数
+	res.locals.showTests = dev && req.query.test === "1";
 	next();
 });
 

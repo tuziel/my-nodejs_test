@@ -1,6 +1,9 @@
 # nodejs学习用DEMO
 
 * 2017/10/11  
+通过中间件判断是否打包代码  
+
+* 2017/10/11  
 使用`contrib-less`处理less文件  
 使用`contrib-uglify`和`contrib-cssmin`压缩代码  
 
